@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from __future__ import with_statement, print_function
 import struct
 import socket
@@ -70,9 +71,10 @@ class MW3Master(protocol.Protocol):
          known = self.getServerList(version).getKnown()
          reply = struct.pack("I", len(known))
          for (ip, port) in known:
-            reply += struct.pack("4sH", socket.inet_aton(ip), port)
+            reply += struct.pack("IH", struct.unpack('>I', socket.inet_aton(ip))[0], port)
          #print('sending %r' % (reply,))
          self.transport.write(reply)
+      self.transport.loseConnection()
 
    def getServerList(self, version):
       with serversLock:
