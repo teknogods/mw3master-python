@@ -92,6 +92,8 @@ class handler(SocketServer.BaseRequestHandler):
 				s += ip + port
 			self.request.send(s)
 
+		self.request.close()
+
 
 	def getServerList(self, version):
 		with serversLock:
