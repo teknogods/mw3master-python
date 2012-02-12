@@ -75,17 +75,17 @@ class handler(SocketServer.BaseRequestHandler):
 		magic = self.request.recv(4)
 
 		if magic == handler.MW3_MS_SERVER_MAGIC4CC:
-			#print("SERVER_MAGIC")
 			version = self.request.recv(4)
 			port = self.request.recv(2)
 			ip = socket.inet_aton(self.client_address[0])
+			print("SERVER_MAGIC Ip: %08X, Port: %d, Version: %08X") % (struct.unpack("I", ip)[0], struct.unpack("I", port+"\0\0")[0], struct.unpack("I", version)[0])
 			ip = socket.htonl(struct.unpack("I", ip)[0])
 			ip = struct.pack("I", ip)
 			self.getServerList(version).ping(ip, port)
 
 		elif magic == handler.MW3_MS_CLIENT_MAGIC4CC:
-			#print("CLIENT_MAGIC")
 			version = self.request.recv(4)
+			print("CLIENT_MAGIC Version: %08X") % (struct.unpack("I", version))
 			known = self.getServerList(version).getKnown()
 			s = struct.pack("I", len(known))
 			for (ip, port) in known:
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 	
 	MW3_MS_LISTEN_PORT = 27017
 
-	print("TeknoMW3 Master Server v1.0b")
+	print("TeknoMW3 Master Server v1.0c")
 	print("============================")
 	print("")
 	print("Listening to connections")
