@@ -46,11 +46,11 @@ class ServerList:
             if diff >= self.MW3_MS_CLEANUP_RATE:
                del self.known[key]
                (ip, port) = key
-               print('%s:%s expired' % (ip, port))
+               print('%s:%s expired (active servers left: %d)' % (ip, port, len(self.known)))
    
    def getKnown(self):
       with self.lock:
-         return self.known
+         return self.known.copy()
                         
 class MW3Master(protocol.Protocol):
    MW3_MS_SERVER_MAGIC4CC = 0x424f4f42
@@ -62,12 +62,12 @@ class MW3Master(protocol.Protocol):
       if magic == self.MW3_MS_SERVER_MAGIC4CC:
          (version, port), data = read_struct("IH", data)
          ip = self.transport.getPeer().host
-         print("SERVER_MAGIC Ip: %s, Port: %d, Version: %08X" % (ip, port, version))
+         #print("SERVER_MAGIC Ip: %s, Port: %d, Version: %08X" % (ip, port, version))
          self.getServerList(version).heartbeat(ip, port)
 
       elif magic == self.MW3_MS_CLIENT_MAGIC4CC:
          (version,), data = read_struct("I", data)
-         print("CLIENT_MAGIC Version: %08X" % (version,))
+         #print("CLIENT_MAGIC Version: %08X" % (version,))
          known = self.getServerList(version).getKnown()
          reply = struct.pack("I", len(known))
          for (ip, port) in known:
