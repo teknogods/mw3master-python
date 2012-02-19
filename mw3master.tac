@@ -28,7 +28,7 @@ class MW3Master(protocol.Protocol):
       vList = serverLists.setdefault(version, {})
 
       # XXX cleanup every time for now XXX
-      for ((ip, port), last) in vList.iteritems():
+      for ((ip, port), last) in vList.copy().iteritems():
          diff = time.time() - last
          if diff >= self.MW3_MS_CLEANUP_RATE:
             del vList[(ip, port)]
