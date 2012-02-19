@@ -32,7 +32,7 @@ class MW3Master(protocol.Protocol):
          diff = time.time() - last
          if diff >= self.MW3_MS_CLEANUP_RATE:
             del vList[(ip, port)]
-            log.info('%s:%s expired (active servers left: %d)' % (ip, port, len(vList)))
+            log.msg('%s:%s expired (active servers left: %d)' % (ip, port, len(vList)))
 
       if magic == self.MW3_MS_SERVER_MAGIC4CC:
 
