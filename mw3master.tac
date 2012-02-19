@@ -28,14 +28,14 @@ class MW3Master(protocol.Protocol):
       vList = serverLists.setdefault(version, {})
 
       # XXX cleanup every time for now XXX
-      for ((ip, port), last) in vList.copy().iteritems():
+      vListCopy = vList.copy()
+      for ((ip, port), last) in vListCopy.iteritems():
          diff = time.time() - last
          if diff >= self.MW3_MS_CLEANUP_RATE:
             del vList[(ip, port)]
-            log.msg('%s:%s expired (active servers left: %d)' % (ip, port, len(vList)))
+            log.msg('%s:%s expired (active servers left: %d)' % (ip, port, len(vListCopy)))
 
       if magic == self.MW3_MS_SERVER_MAGIC4CC:
-
          (port, ), data = read_struct("H", data)
          ip = self.transport.getPeer().host
          #print("SERVER_MAGIC Ip: %s, Port: %d, Version: %08X" % (ip, port, version))
