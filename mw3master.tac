@@ -17,7 +17,6 @@ serverLists = {}
 def read_struct(fmt, data):
    return struct.unpack_from(fmt, data), data[struct.calcsize(fmt):]
 
-
 class MW3Master(protocol.Protocol):
    MW3_MS_SERVER_MAGIC4CC = 0x424f4f42
    MW3_MS_CLIENT_MAGIC4CC = 0x434f4b45
@@ -26,6 +25,11 @@ class MW3Master(protocol.Protocol):
    def dataReceived(self, data):
       (magic, version), data = read_struct("II", data)
       vList = serverLists.setdefault(version, {})
+
+      # ignore old clients
+      if version == 17039742:
+         self.transport.loseConnection()
+         return
 
       # XXX cleanup every time for now XXX
       vListCopy = vList.copy()
